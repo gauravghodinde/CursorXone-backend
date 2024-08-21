@@ -3,7 +3,7 @@ import { createServer } from 'http';
 import {Server} from 'socket.io';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import connectDB from './src/database/index.js';
+import connectDB from '../src/database/index.js';
 
 // import {connectDB}
 dotenv.config();
@@ -25,7 +25,7 @@ const corsOptions = {
 app.use(cors());
 
 //routes
-import userRouter from "./src/routes/user.routes.js"
+import userRouter from "../src/routes/user.routes.js"
 app.use("/users", userRouter)
 
 
