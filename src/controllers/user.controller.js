@@ -94,10 +94,90 @@ const registerUser =  async (req, res) => {
   }
 
 
+const updateUser = async (req,res) =>  {
+  const {name,userid,sex,bio,socialLinks,cursorimages,currentimage} = req.body;
+  console.log("updatinf user")
+
+
+  
+  if(checkNullUndefined(userid) ){
+    return res.status(400).json({ error: "invalid credentials" });
+  }
+  try {
+        
+    
+    const user = await User.findOne({
+      $or: [{"_id":userid}]
+
+      })
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+
+    // Create an object to store fields that are not null or undefined
+    const updateFields = {};
+    if (name !== undefined) updateFields.name = name;
+    if (sex !== undefined) updateFields.sex = sex;
+    if (bio !== undefined) updateFields.bio = bio;
+    if (socialLinks !== undefined) updateFields.socialLinks = socialLinks;
+    if (cursorimages !== undefined) updateFields.cursorimages = cursorimages;
+    if (currentimage !== undefined) updateFields.currentimage = currentimage;
+
+    // Update the user document with the fields that are not null
+    await User.updateOne({ "_id":userid }, { $set: updateFields });
+
+    const updatedUser = await User.findOne({
+      $or: [{_id:userid}]
+      })
+    res.status(200).json({ message: 'User updated successfully' , body: updatedUser });
+  
+
+
+
+  } catch (error) {
+    console.error('Error logging in user:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+
+
+  
+}
+
+
+const getUser =  async (req, res) => {
+  const { userid } = req.body;
+
+  if(checkNullUndefined(userid) ){
+      return res.status(400).json({ error: "invalid credentials" });
+  }
+
+  try {
+      
+  
+    const user = await User.findOne({
+      $or: [{_id:userid}]
+      })
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    
+    res.status(200).json({ message: 'success', body: user });
+
+
+
+  } catch (error) {
+    console.error('Error logging in user:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
+
 
 export {
     registerUser,
-    loginUser,
-   
-   
+    loginUser,  
+    updateUser,
+    getUser
 }

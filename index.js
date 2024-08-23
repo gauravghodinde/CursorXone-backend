@@ -27,6 +27,8 @@ app.use(cors());
 //routes
 import userRouter from "./src/routes/user.routes.js"
 app.use("/users", userRouter)
+import cursorimageRouter from "./src/routes/cursorImage.routes.js"
+app.use("/cursors", cursorimageRouter)
 
 
 // Object to track connected users in each room

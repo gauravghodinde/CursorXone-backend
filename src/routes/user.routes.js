@@ -1,5 +1,6 @@
 import { Router } from "express";
-import {loginUser, registerUser } from "../controllers/user.controller.js";
+import {getUser, loginUser, registerUser, updateUser } from "../controllers/user.controller.js";
+
 
 const router = Router();
 
@@ -7,6 +8,9 @@ const router = Router();
 router.route("/auth/signup").post(registerUser);
 
 router.route("/auth/login").post(loginUser);
+
+router.route("/update").post(updateUser);
+router.route("/").post(getUser);
 
 
 export default router;
