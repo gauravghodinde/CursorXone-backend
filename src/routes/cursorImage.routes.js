@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getImages, uploadImage } from "../controllers/cursorImage.controller.js";
+import { deleteImage, getImages, uploadImage } from "../controllers/cursorImage.controller.js";
 import { upload } from "../utils/multer.js";
 
 
@@ -18,5 +18,7 @@ router.route("/upload").post(upload.fields([
 
 
 router.route("/get").post(getImages);
+
+router.route("/delete").post(deleteImage);
 
 export default router;

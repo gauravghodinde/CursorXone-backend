@@ -49,6 +49,8 @@ const uploadImage =  async (req, res) => {
         }
 
         
+
+        
         
 
         
@@ -91,7 +93,38 @@ const uploadImage =  async (req, res) => {
   };
   
 
+  const deleteImage = async (req,res) =>{
+    const {cursorImageid} = req.body;
+    if (!cursorImageid) {
+      return res.status(400).json({ error: "Invalid credentials: cursorImageid is null or undefined" });
+    }
+
+
+    try {
+      const cursorImage = await CursorImage.findById(cursorImageid);
+      if (!cursorImage) {
+        console.log('CursorImage not found');
+        return res.status(404).json({
+          status: "Failed",
+          message: "CursorImage does not exist"
+        });
+      }
+      
+      
+      cursorImage.userid = '66c8601eac78bd1fdd7b8a6a';
+      await cursorImage.save();
+      
+      res.status(200).json({ message: "success" });
+    } catch (e) {
+      console.error("Error getting images:", e);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+
+  }
+
 export {
   uploadImage,
-  getImages
+  getImages,
+  deleteImage
 }

@@ -1,12 +1,13 @@
 import {User} from "../models/user.model.js";
 import { checkNullUndefined } from "../utils/tools.js";
+import { CursorImage } from "../models/cursorimges.model.js";
 import axios from "axios"
 import bcrypt from "bcrypt"
 import { docs } from "googleapis/build/src/apis/docs/index.js";
 const registerUser =  async (req, res) => {
-    const { name, email ,password } = req.body;
+    const { name, email ,password , image} = req.body;
     
-    if (checkNullUndefined(name) ||checkNullUndefined(email)|| checkNullUndefined(password)) {
+    if (checkNullUndefined(name) ||checkNullUndefined(email)|| checkNullUndefined(password) || checkNullUndefined(image)  ) {
       return res.status(400).json({ error: "invalid credentials null" })
     }
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -36,10 +37,12 @@ const registerUser =  async (req, res) => {
             name,
             email,
             password: passwordcrpted,
+            currentimage: image
         })
         const createdUser = await User.findById(user._id).select(
             "-password"
         )
+
 
         if(!createdUser){
             return res.status(400).json({
@@ -47,7 +50,12 @@ const registerUser =  async (req, res) => {
                 message: "something went wrong"
               });
         }
-      res.status(201).json({ message: 'User signed up successfully' });
+
+        const cursorImage = await CursorImage.create({
+          userid:user._id,
+          imagebase64:image
+         })
+      res.status(201).json({ message: 'User signed up successfully', body: user });
     } catch (error) {
       console.error('Error signing up user:', error);
       res.status(500).json({ error: 'Internal server error' });
@@ -121,7 +129,7 @@ const updateUser = async (req,res) =>  {
     if (sex !== undefined) updateFields.sex = sex;
     if (bio !== undefined) updateFields.bio = bio;
     if (socialLinks !== undefined) updateFields.socialLinks = socialLinks;
-    if (cursorimages !== undefined) updateFields.cursorimages = cursorimages;
+    // if (cursorimages !== undefined) updateFields.cursorimages = cursorimages;
     if (currentimage !== undefined) updateFields.currentimage = currentimage;
 
     // Update the user document with the fields that are not null

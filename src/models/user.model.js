@@ -23,9 +23,9 @@ const userSchema = new Schema({
   socialLinks:{
     type: [String],
   },
-  cursorimages: {
-    type: [String],
-  },
+  // cursorimages: {
+  //   type: [String],
+  // },
   currentimage:{
     type: String
   }
