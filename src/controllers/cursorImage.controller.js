@@ -8,7 +8,7 @@ import fs from "fs"
 const uploadImage =  async (req, res) => {
     const { userid, imagebase64 } = req.body;
     
-    console.log(req.files.image[0]);
+    // console.log(req.files.image[0]);
     if (checkNullUndefined(userid) ) {
       return res.status(400).json({ error: "invalid credentials null" })
     }
@@ -25,15 +25,28 @@ const uploadImage =  async (req, res) => {
               });
         }
 
-        const cursorImage = new CursorImage();
-        cursorImage.userid = userid;
-        cursorImage.baseModelName = imagebase64;
-        cursorImage.image.data = fs.readFileSync(req.files.image[0].path);
-        cursorImage.image.contentType= req.files.image[0].mimetype;
+        // const cursorImage = new CursorImage();
+        // cursorImage.userid = userid;
+        // cursorImage.baseModelName = imagebase64;
+        // cursorImage.image.data = fs.readFileSync(req.files.image[0].path);
+        // cursorImage.image.contentType= req.files.image[0].mimetype;
        
-        cursorImage.save();
+        // cursorImage.save();
 
 
+        const cursorImage = await CursorImage.create({
+          userid,
+          imagebase64
+         })
+
+         const createdcursorImage = await CursorImage.findById(cursorImage._id)
+
+         if(!createdcursorImage){
+          return res.status(400).json({
+              status: "Failed",
+              message: "something went wrong"
+            });
+        }
 
         
         
@@ -41,7 +54,7 @@ const uploadImage =  async (req, res) => {
         
         
         
-      res.status(201).json({ message: 'image uploded successfully' });
+      res.status(201).json({ message: 'image uploded successfully' , body : createdcursorImage});
     } catch (error) {
       console.error('Error signing up user:', error);
       res.status(500).json({ error: 'Internal server error' });
