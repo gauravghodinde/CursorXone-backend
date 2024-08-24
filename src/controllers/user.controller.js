@@ -103,7 +103,7 @@ const registerUser =  async (req, res) => {
 
 
 const updateUser = async (req,res) =>  {
-  const {name,userid,sex,bio,socialLinks,cursorimages,currentimage} = req.body;
+  const {userid,sex,bio,socialLinks,cursorimages,currentimage} = req.body;
   console.log("updatinf user")
 
 
@@ -125,7 +125,7 @@ const updateUser = async (req,res) =>  {
 
     // Create an object to store fields that are not null or undefined
     const updateFields = {};
-    if (name !== undefined) updateFields.name = name;
+    
     if (sex !== undefined) updateFields.sex = sex;
     if (bio !== undefined) updateFields.bio = bio;
     if (socialLinks !== undefined) updateFields.socialLinks = socialLinks;
@@ -154,9 +154,9 @@ const updateUser = async (req,res) =>  {
 
 
 const getUser =  async (req, res) => {
-  const { userid } = req.body;
+  const { username } = req.body;
 
-  if(checkNullUndefined(userid) ){
+  if(checkNullUndefined(username) ){
       return res.status(400).json({ error: "invalid credentials" });
   }
 
@@ -164,7 +164,7 @@ const getUser =  async (req, res) => {
       
   
     const user = await User.findOne({
-      $or: [{_id:userid}]
+      $or: [{name:username}]
       })
     if (!user) {
       return res.status(404).json({ error: 'User not found' });

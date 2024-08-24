@@ -1,7 +1,7 @@
 import express from 'express';
 import { createServer } from 'http';
 import {Server} from 'socket.io';
-import cors from 'cors';
+  import cors from 'cors';
 import dotenv from 'dotenv';
 import connectDB from './src/database/index.js';
 
@@ -49,9 +49,14 @@ const io = new Server(server, {
   },
 });
 
+// import rtcMultiConnectionServer from 'rtcmulticonnection-server';
 
+
+// rtcMultiConnectionServer.addSocket(io);
 io.on('connection', (socket) => {
-  //Join-Room event listener
+  
+
+  
   socket.on('join-room', ({ roomId, username }) => {
 
     console.log("Socket connection Start");
@@ -106,6 +111,10 @@ io.on('connection', (socket) => {
 
     // Update the list of connected users in Current ROOM // Broadcasting not on all available rooms
     io.in(roomId).emit('connected-users', roomUsers[roomId]);
+  });
+
+  socket.on('audioStream', (audioBlob) => {
+    socket.broadcast.emit('audioStream', audioBlob); // Broadcast to all clients
   });
 
 });
