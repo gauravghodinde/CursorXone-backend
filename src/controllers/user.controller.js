@@ -7,6 +7,7 @@ import { docs } from "googleapis/build/src/apis/docs/index.js";
 const registerUser =  async (req, res) => {
     const { name, email ,password , image , bio , socialLinks} = req.body;
     
+    // socialLinks = 
     if (checkNullUndefined(name) ||checkNullUndefined(email)|| checkNullUndefined(password) || checkNullUndefined(image) ||  checkNullUndefined(bio) || checkNullUndefined(socialLinks) ) {
       return res.status(400).json({ error: "invalid credentials null" })
     }
