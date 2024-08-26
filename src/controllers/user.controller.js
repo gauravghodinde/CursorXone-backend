@@ -5,9 +5,9 @@ import axios from "axios"
 import bcrypt from "bcrypt"
 import { docs } from "googleapis/build/src/apis/docs/index.js";
 const registerUser =  async (req, res) => {
-    const { name, email ,password , image} = req.body;
+    const { name, email ,password , image , bio , socialLinks} = req.body;
     
-    if (checkNullUndefined(name) ||checkNullUndefined(email)|| checkNullUndefined(password) || checkNullUndefined(image)  ) {
+    if (checkNullUndefined(name) ||checkNullUndefined(email)|| checkNullUndefined(password) || checkNullUndefined(image) ||  checkNullUndefined(bio) || checkNullUndefined(socialLinks) ) {
       return res.status(400).json({ error: "invalid credentials null" })
     }
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -37,7 +37,9 @@ const registerUser =  async (req, res) => {
             name,
             email,
             password: passwordcrpted,
-            currentimage: image
+            currentimage: image,
+            bio,
+            socialLinks
         })
         const createdUser = await User.findById(user._id).select(
             "-password"
@@ -77,7 +79,7 @@ const registerUser =  async (req, res) => {
         $or: [{email}]
         })
       if (!user) {
-        return res.status(404).json({ error: 'User not found' });
+        return res.status(400).json({ error: 'User not found' });
       }
       // console.log("login auth")
       // await login(email);
