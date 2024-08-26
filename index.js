@@ -115,7 +115,7 @@ io.on('connection', (socket) => {
       console.log('Checking table:', tableKey);
     
       // Find the user in the current table
-      const existingUser = table[tableKey].find((user) => user.username === username);
+      const existingUser = table[tableKey]?.find((user) => user.username === username);
     
       if (existingUser) {
         console.log('User found in table:', tableKey);
@@ -136,14 +136,15 @@ io.on('connection', (socket) => {
     }
     console.log(JSON.stringify(table));
     //Broadcast the list of connected users to everyone in the room except him
-    io.in(tableId).emit('connected-users-table', table[tableId].map(user => user.username));  // send array of UserNames
+    // io.in(tableId).emit('connected-users-table', table[tableId].map(user => user.username));  // send array of UserNames
+    io.emit('connected-users-table', table);  // send array of UserNames
 
     
   });
   // Join-Room Ends
 
 
-  socket.on('cursor-move', ({roomId, username, cursorPos}) => {
+  socket.on('cursor-move', ({roomId, username, cursorPos }) => {
     console.log("cursor movement change for " + username + JSON.stringify(cursorPos) );
     // socket.to(roomId).emit('remote-cursor-move', {username, cursorPos});
     // socket.broadcast(roomId).emit('remote-cursor-broadcast' , {username,cursorPos})
@@ -162,21 +163,23 @@ io.on('connection', (socket) => {
     socket.to(roomId).emit('user-left', username);
 
     // Update the list of connected users in Current ROOM // Broadcasting not on all available rooms
-    io.in(roomId).emit('connected-users', table[tableId]);
+    io.emit('connected-users-table', table);
   });
 
   socket.on('leave-table', ({ tableId, username }) => {
+    console.log(tableId)
     socket.leave(tableId);
     console.log(`User  ${username}  left from table: ${tableId}`);
     console.log(` table: ${JSON.stringify(table)}`);
     // Remove the user from the room list
-    table[tableId] = table[tableId].filter(user => user.username !== username);
+    table[tableId] = table[tableId]?.filter(user => user.username !== username);
 
     // Notify other users in the room
     socket.to(tableId).emit('user-left', username);
 
     // Update the list of connected users in Current ROOM // Broadcasting not on all available rooms
-    io.in(tableId).emit('connected-users-table', table[tableId]);
+    // io.in(tableId).emit('connected-users-table', table[tableId]);
+    io.emit('connected-users-table', table);
     // io.in(tableId).emit('connected-users', table[tableId].map(user => user.username)); 
   });
 
@@ -184,30 +187,29 @@ io.on('connection', (socket) => {
 
     console.log(audioBlob);
     console.log(audioBlob.tableId);
+    console.log(audioBlob.username);
     console.log(io.sockets.adapter.rooms.get(audioBlob.tableId));
+    // io.in(audioBlob.tableId).emit('audioStream', audioBlob); 
     io.in(audioBlob.tableId).emit('audioStream', audioBlob); 
     // io.in(tableId).emit('connected-users', table[tableId].map(user => user.username)); 
   });
 
-  // function getUsersInRoom(roomId) {
-  //   const room = ;
-  //   if (!room) return [];
 
-  //   // Get all socket IDs in the room
-  //   const users = Array.from(room);
+  socket.on('message-global' , (data) => {
+    console.log("message by " , data.username);
+    console.log(data.text);
+    io.emit('messageResponse' , data)
+  })
 
-  //   // Map to get usernames (you will need to store usernames somewhere, such as in a Map or object)
-  //   return users.map((socketId) => {
-  //     const socket = io.sockets.sockets.get(socketId);
-  //     return socket.username; // Assume you set the username somewhere
-  //   });
-  // }
+  socket.on('emoji' , (emoji) => {
+    console.log("message by " , emoji.username);
+    console.log(emoji.emojiText);
+    io.emit('emoji-changed' , emoji)
+  })
 
 });
 
-// Start the server
-// const PORT = process.env.PORT || 5000;
-// server.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+
 
 connectDB().then(() => {
   server.listen(port, () => {
