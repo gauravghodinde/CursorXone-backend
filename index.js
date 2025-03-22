@@ -22,8 +22,15 @@ const port = process.env.PORT || 3000;
 //   },
 // };
 
-app.use(cors());
+app.use(cors({
+  origin: '*', // Allows requests from any origin
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow all common methods
+  allowedHeaders: ['Content-Type', 'Authorization'], // Allow standard headers
+  credentials: true, // Allow cookies if needed
+}));
 
+// Handle preflight requests for all routes
+app.options('*', cors());
 //routes
 import userRouter from "./src/routes/user.routes.js"
 app.use("/users", userRouter)
