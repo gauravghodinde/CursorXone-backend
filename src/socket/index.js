@@ -1,4 +1,4 @@
-import handleDisconnect from "./handle_disconnect";
+import handleDisconnect from "./handle_disconnect.js";
 
 
 const roomUsers = {};
