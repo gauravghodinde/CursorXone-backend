@@ -66,10 +66,38 @@ const io = new Server(server, {
 // rtcMultiConnectionServer.addSocket(io);
 io.on('connection', (socket) => {
   
-
+  socket.on('disconnect', () => {
+    console.log(`Socket disconnected: ${socket.id}`);
+  
+    // Handle removal from roomUsers
+    for (const roomId in roomUsers) {
+      const userIndex = roomUsers[roomId].findIndex(user => user.id === socket.id);
+      if (userIndex !== -1) {
+        const username = roomUsers[roomId][userIndex].username;
+        roomUsers[roomId].splice(userIndex, 1);
+        socket.to(roomId).emit('user-left', username);
+        console.log(`User ${username} removed from room ${roomId} on disconnect`);
+      }
+    }
+  
+    // Handle removal from table
+    for (const tableId in table) {
+      const userIndex = table[tableId].findIndex(user => user.id === socket.id);
+      if (userIndex !== -1) {
+        const username = table[tableId][userIndex].username;
+        table[tableId].splice(userIndex, 1);
+        socket.to(tableId).emit('user-left', username);
+        console.log(`User ${username} removed from table ${tableId} on disconnect`);
+      }
+    }
+  
+    // Broadcast updated state
+    io.emit('connected-users-table', table);
+  });
+  
   
   socket.on('join-room', ({ roomId, username }) => {
-
+    
     console.log("Socket connection Start");
     socket.join(roomId);
     console.log("Connected with socket id:" + socket.id + "  roomId:" + roomId + " user:" + username);
@@ -215,6 +243,8 @@ io.on('connection', (socket) => {
   })
 
 });
+
+
 
 
 
