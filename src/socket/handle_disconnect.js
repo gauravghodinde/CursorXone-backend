@@ -19,13 +19,13 @@ export default function handleDisconnect(io, socket, roomUsers, table) {
       if (userIndex !== -1) {
         const userId = table[tableId][userIndex].userId;
         table[tableId].splice(userIndex, 1);
-        socket.to(tableId).emit('user-left', userId);
+        socket.to(tableId).emit('user-left-table', userId);
         console.log(`User ${userId} removed from table ${tableId} on disconnect`);
       }
     }
   
-    // Broadcast updated state
-    io.emit('connected-users-table', table);
+
+    // io.emit('connected-users-table', table);
   });    
 }
   

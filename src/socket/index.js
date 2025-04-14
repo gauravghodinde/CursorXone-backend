@@ -16,9 +16,9 @@ export default function socketConnection(io) {
   handle_table(io, socket, roomUsers, table);
   
 
-  socket.on('cursor-move', ({roomId, userId, username ,cursorPos }) => {
+  socket.on('cursor-move', ({roomId, userId, username ,cursorPos , currImg }) => {
     console.log("cursor movement change for " + userId + JSON.stringify(cursorPos) );
-    io.in(roomId).emit('remote-cursor-move', {userId, username ,cursorPos});
+    io.in(roomId).emit('remote-cursor-move', {userId, username ,cursorPos,currImg});
   });
 
 
